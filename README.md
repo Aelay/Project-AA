@@ -1,10 +1,7 @@
 
 # Project-AA
-
-
-
-
-
+CS506 Project
+By Aaron Elliot, and Alexey Levin
 
 
 Notes from before:
@@ -25,3 +22,7 @@ Notes from before:
 
 
 	need a **target**
+
+Possible directions
+	Classify posts into groups and name the groups
+	Predict behaviour of user based on prior behaviour
