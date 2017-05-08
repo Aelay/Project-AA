@@ -98,9 +98,9 @@
 
 We consider data from twitter, working with text contents of tweets.
 Our purpose is to obtain classification of tweets, which could be applied to user's feed to filter it.
-The classification is done using LSA and applying GMM method afterwards.
+The classification is done using LSA and applying GMM or Kmeans afterwards.
 % We show that resulting clusters are ... (!!!)
-We build network of user interaction, using mentions in tweets. Network structure then can be used to complement the classifier and improve relevance of a particular users' feed.
+We also build network of user interactions, using mentions in tweets. Network structure then can be used to complement the classifier and improve relevance of a particular users' feed.
 
 % ful in determining tweets that are relevant to the user, but posted from outside of the set of people they follow.
 
@@ -131,7 +131,7 @@ We build network of user interaction, using mentions in tweets. Network structur
 % Intro, Problem.
 
 Twitter is one of the most heavily used services today. 
-It is a social media platform that let's users publish their thoughts in form of short 'tweets' - posts that are at most 140 characters long.
+It is a social media platform that lets users publish their thoughts in form of short 'tweets' - posts that are at most 140 characters long.
 The brief nature of communications on twitter make it a very 'real-time' platform, where large volumes of posts can appear in a very short time.
 
 This poses a problem: a particular user's feed (tweets from everyone they are subscribed to) becomes extremely cluttered, to the extent of being useless. Also, different accounts post with frequencies varying by many orders of magnitude, so feed becomes dominated by most abundant, noisy channels, which makes the average importance of tweets in the feed low.
@@ -140,7 +140,7 @@ This poses a problem: a particular user's feed (tweets from everyone they are su
 
 \section{Method}
 
-Ultimately the solution is to offer some filtering method for user's feed.
+Ultimately the solution is to offer some filtering method.
 
 The methods that could be used to approach this problem could be:
 \begin{itemize}
@@ -150,8 +150,8 @@ The methods that could be used to approach this problem could be:
 
     \item[b)] Classifying tweets into categories.\\
     %!!!
-	Downside: does not ultimately tune to user, user still has work to do, by choosing, which categories to read. 
-	However, categories could be clustered based of "importance" of information (as in 'casual chat' vs 'breaking news'), which solves original problem.
+	Downside: does not ultimately tune to user, user still has work to do, by choosing which categories to read. 
+	However, categories could be determined based on "importance" of information (as in 'casual chat' vs 'breaking news'), which solves original problem.
 % 	there is hope that categories might look as 'meaningful', 'trash', containing 'importance' information in them too 
 \end{itemize}
 
@@ -179,16 +179,16 @@ We merged data from all of these sources and used that as our dataset.
 
 Our analysis consisted of two components: analysis of network structure and NLP.
 
-First thing we had to do was constructing the network. We did this by parsing texts of tweets using regular expressions and adding an edge between users if one of them mentions the other.
+First thing we had to do was construct the network. We did this by parsing texts of tweets using regular expressions and adding an edge between users if one of them mentions the other.
 
-For the document-term analysis, we used 'bag of words' approach and TfIdf technique to vectorize the data (using english stopwords dictionary and thresholding the term frequency on both sides to clean data of corpus specific stopwords and irrelevant terms only appear in a few documents). Finally, we reduced the dimensionality of our data by performing PCA. We kept 5 largest singular values in our further analysis.
+For the document-term analysis, we used 'bag of words' approach and TfIdf technique to vectorize the data (using english stopwords dictionary and thresholding the term frequency on both sides to clean data of corpus specific stopwords or irrelevant terms that appear only in a few documents). Finally, we reduced the dimensionality of our data by performing PCA. We keep 15 largest singular values in our further analysis.
 
 
 \section{Analysis}
 
 \subsection{Basic properties of data.}
 
-Our final dataset had approximately 1610000 tweets from 660000 users. The network of mentions, which also contains user from outsied of dataset that were mentioned had approximately 900000 nodes and 620000 edges. The largest connected component that we are working with has $\sim 340000$ nodes.
+Our final dataset had approximately 1610000 tweets from 660000 users. The network of mentions, which also contains users from outside of dataset that were mentioned had approximately 900000 nodes and 620000 edges. The largest connected component that we are working with has $\sim 340000$ nodes.
 
 % The basic properties of the data we had were:
 % ...
@@ -196,12 +196,12 @@ Our final dataset had approximately 1610000 tweets from 660000 users. The networ
 
 \subsection{Network}
 
-For the network data we efficiently found clusters (communities) using KMEANS++ on spectral representaion of a network using 5 lowest non-zero eigenvectors.
+For the network data we efficiently found clusters (communities) using Kmeans++ on spectral representation of a network using 5 lowest non-zero eigenvectors.
 
 \begin{figure}[htp]
 \centering
 \includegraphics[width=10cm]{communities}
-\caption{Communities in the network of mentions on twitter, using spectral decomposition and kmeans++}
+\caption{Communities in the network of mentions on twitter, using spectral decomposition and kmeans++.}
 \label{fig}
 \end{figure}
 %!!! weird figs...
@@ -213,7 +213,7 @@ For the network data we efficiently found clusters (communities) using KMEANS++ 
 % \label{fig}
 % \end{figure}
 
-We performed basic analysis of the network that we built out of user mentions. Indeed, the network exhibits all the expected properties of a real world-network. Degrees are distributed as a power law.
+We performed basic analysis of the network that we built out of user mentions. Indeed, the network exhibits all the expected properties of a real world-network. In particular, degrees are distributed as a power law.
 
 \begin{figure}[htp]
 \centering
@@ -224,16 +224,16 @@ We performed basic analysis of the network that we built out of user mentions. I
 
 % Core size distribution.
 
-Properties of relations between users in the network of mentions give methods of predicting relevance of a tweet to the user that are complementary to the NLP analysis.
+Properties of relations between users in the network of mentions give methods of predicting relevance of a tweet to the user (using network-based similarity measures) that are complementary to the NLP analysis.
 
 
 \newpage
 
 \subsection{NLP.}
 
-We used clustering with Gaussian Mixture Models and KMEANS++ to find topics that people talk about.
+We used clustering with Gaussian Mixture Models and Kmeans++ to find topics that people talk about.
 
-We analyzed the terms that were the most popular in each cluster.
+We analyzed the terms that were most popular in each cluster.
 
 Almost every cluster had as it's most popular terms words related to time, especially to currents moment (such as \textit{now, today, tomorrow, morning} and such), and words related to \textit{work} or \textit{school}.
 
@@ -251,25 +251,6 @@ The most obvious differentiator between clusters was, maybe surprisingly, the se
 Comparing clusters to network data we observe the following.
 Mentioning communities on twitter are not interest-based. 
 The distribution of topics that people tweet about is homogeneous over the network. So, communities are rather 'College 1', 'College 2', than 'divers', 'football players', and the topics spoken about in College 1 and College 2 are same.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
